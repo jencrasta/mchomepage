@@ -216,17 +216,17 @@
   .create-email-btn:hover { background: var(--teal-dark); }
 
   .date-range {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: #fff;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #ECEEF0;
     border: 1px solid var(--border-strong);
     border-radius: 6px;
     padding: 7px 12px;
     font-size: 13px;
     cursor: pointer;
-    margin-bottom: 4px;
   }
-  .date-range-wrap { margin-bottom: 16px; }
-  .compare-text { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+  .date-range:hover { background: #E2E5E8; }
+  .compare-text-wrap { margin-bottom: 12px; }
+  .compare-text { font-size: 12px; color: var(--text-muted); }
 
   /* ------- Cards ------- */
   .card {
@@ -269,36 +269,71 @@
   }
   .deeper-link:hover, .dismiss-link:hover { text-decoration: underline; }
 
-  /* Authentication placeholder rows (top of Today's focus) */
+  /* Authentication placeholder rows (top of Your daily focus) */
   .auth-row {
     display: flex; align-items: center; justify-content: space-between;
-    background: var(--auth-bg);
-    border: 1px solid var(--auth-border);
+    background: #FFFFFF;
+    border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 10px 14px;
+    padding: 12px 14px;
     margin-bottom: 8px;
     font-size: 13px;
-    cursor: pointer;
     transition: background 0.15s;
   }
-  .auth-row:hover { background: #fff0c4; }
+  .auth-row:hover { background: #FAFAFA; }
   .auth-left { display: flex; align-items: center; gap: 10px; }
-  .auth-tag {
-    background: #B86E00;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 4px;
-    text-transform: lowercase;
-    letter-spacing: 0.2px;
+  .check-circle {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid #6B6B6B;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: #6B6B6B;
   }
+  .check-circle svg { width: 10px; height: 10px; }
   .auth-text { color: var(--text); }
   .auth-text strong { font-weight: 600; }
+  .auth-right {
+    display: flex; align-items: center; gap: 14px;
+  }
   .auth-cta {
     color: var(--link); font-weight: 500;
+    cursor: pointer;
     display: inline-flex; align-items: center; gap: 4px;
   }
+  .auth-cta:hover { text-decoration: underline; }
+  .later-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-soft);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .later-btn:hover { background: #F0F0F0; color: var(--text); }
+
+  /* Empty state for caught up */
+  .caught-up {
+    display: none;
+    text-align: center;
+    padding: 18px 14px;
+    color: var(--text-soft);
+    font-size: 13px;
+    background: #FFFFFF;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+  .caught-up.show { display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .caught-up-check {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--green);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .caught-up-check svg { width: 10px; height: 10px; }
 
   /* Marketing Diagnostics — nested with lighter blue background */
   .diagnostics {
@@ -331,6 +366,7 @@
     border-radius: 10px;
     text-transform: capitalize;
   }
+  .diag-actions { display: flex; gap: 8px; }
   .ask-ai-btn {
     background: #fff;
     border: 1px solid var(--border-strong);
@@ -342,15 +378,103 @@
   }
   .ask-ai-btn:hover { background: #f7f7f7; }
 
-  .insight-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 4px;
-    border-top: 1px solid #DCE9F5;
-    cursor: pointer;
-    transition: background 0.15s;
+  /* Single-insight visibility — only the active insight + its detail show */
+  .insight-row { display: none; }
+  .insight-row.current { display: flex; cursor: pointer; }
+  .insight-row.current:hover { background: rgba(255,255,255,0.5); }
+  /* Detail is hidden by default even when current — opens on click */
+  .insight-detail.current { display: none; }
+  .insight-detail.current.expanded { display: block; }
+
+  /* Caret rotation when expanded */
+  .insight-link::after {
+    transition: transform 0.2s;
+    display: inline-block;
   }
-  .insight-row:hover { background: rgba(255,255,255,0.5); }
-  .insight-row.expanded { background: rgba(255,255,255,0.7); }
+  .insight-row.expanded .insight-link::after {
+    transform: rotate(180deg);
+  }
+
+  .got-it-btn {
+    background: #fff;
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+    padding: 6px 14px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-left: 12px;
+  }
+  .got-it-btn:hover { background: #F5F5F5; }
+
+  /* Previous insight "shadow" tabs — stacked above the current insight */
+  .prev-insights {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .prev-insight-tab {
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid #DCE9F5;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--text-soft);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    opacity: 0.85;
+    transition: all 0.15s;
+  }
+  .prev-insight-tab:hover {
+    opacity: 1;
+    background: rgba(255,255,255,0.9);
+  }
+  .prev-tab-left {
+    display: flex; align-items: center; gap: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .prev-tab-icon {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+    color: var(--text-soft);
+  }
+  .prev-tab-title {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .view-again-btn {
+    background: transparent;
+    border: none;
+    color: var(--link);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .view-again-btn:hover { text-decoration: underline; }
+
+  /* Diagnostics empty state */
+  .diag-caught-up {
+    text-align: center;
+    padding: 18px 14px;
+    color: var(--text-soft);
+    font-size: 13px;
+    display: none;
+    align-items: center; justify-content: center; gap: 8px;
+    border-top: 1px solid #DCE9F5;
+  }
+  .diag-caught-up.show { display: flex; }
+
+  .insight-row {
+    align-items: center; justify-content: space-between;
+    padding: 12px 4px;
+    cursor: default;
+  }
   .insight-left {
     display: flex; align-items: center; gap: 10px;
     font-size: 13px;
@@ -661,17 +785,17 @@
           <button class="audience-pill">Audience: BorderBouncerz</button>
         </div>
         <div class="header-actions">
+          <button class="date-range">📅 Last 30 days ▾</button>
           <button class="quick-actions-btn">Quick actions</button>
           <button class="create-email-btn">Create email</button>
         </div>
       </div>
 
-      <div class="date-range-wrap">
-        <button class="date-range">Last 30 days 📅</button>
+      <div class="compare-text-wrap">
         <div class="compare-text">Compared to previous 30 days</div>
       </div>
 
-      <!-- ========= TODAY'S FOCUS ========= -->
+      <!-- ========= YOUR DAILY FOCUS ========= -->
       <div class="card focus-card">
         <div class="focus-header">
           <div class="focus-title-wrap">
@@ -680,29 +804,37 @@
               <circle cx="12" cy="12" r="6"/>
               <circle cx="12" cy="12" r="2" fill="#1B5DAB"/>
             </svg>
-            <span class="focus-title">Today's focus</span>
+            <span class="focus-title">Your daily focus</span>
           </div>
           <div class="focus-actions">
-            <a class="deeper-link">Go deeper with Analytics AI →</a>
             <span class="dismiss-link">Dismiss all</span>
           </div>
         </div>
 
-        <!-- Authentication placeholders (top) -->
-        <div class="auth-row" onclick="alert('Domain authentication wizard would open here.')">
-          <div class="auth-left">
-            <span class="auth-tag">Action needed</span>
-            <span class="auth-text"><strong>Authenticate your domain</strong> to increase delivery rate by up to 20%</span>
+        <!-- Top action items wrapper -->
+        <div class="action-items">
+          <!-- Authentication placeholders (top) -->
+          <div class="auth-row" data-action-id="auth-domain">
+            <div class="auth-left">
+              <span class="check-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              <span class="auth-text"><strong>Authenticate your domain</strong> to increase delivery rate by up to 20%</span>
+            </div>
+            <div class="auth-right">
+              <button class="later-btn" data-dismiss="auth-domain">Do it later</button>
+              <span class="auth-cta" onclick="alert('Domain authentication wizard would open here.')">Authenticate now →</span>
+            </div>
           </div>
-          <span class="auth-cta">Authenticate now →</span>
+
         </div>
 
-        <div class="auth-row" onclick="alert('SPF/DKIM setup would open here.')">
-          <div class="auth-left">
-            <span class="auth-tag">Action needed</span>
-            <span class="auth-text"><strong>Set up SPF & DKIM records</strong> to protect your sender reputation</span>
-          </div>
-          <span class="auth-cta">Set up records →</span>
+        <!-- Empty state when all top actions dismissed -->
+        <div class="caught-up" id="caught-up-state">
+          <span class="caught-up-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          You've caught up
         </div>
 
         <!-- Marketing diagnostics — nested sub-component -->
@@ -715,18 +847,24 @@
               <span class="diag-title">Marketing diagnostics</span>
               <span class="beta-tag">Beta</span>
             </div>
-            <button class="ask-ai-btn">✦ Ask Analytics AI</button>
+            <div class="diag-actions">
+              <button class="ask-ai-btn" onclick="alert('Past insights archive would open here.')">⏱ View past insights</button>
+              <button class="ask-ai-btn">✦ Ask Analytics AI</button>
+            </div>
           </div>
 
+          <!-- Stack of dismissed insights (shadow tabs) -->
+          <div class="prev-insights" id="prev-insights"></div>
+
           <!-- Insight 1: Revenue up -->
-          <div class="insight-row" data-target="detail-revenue" tabindex="0">
+          <div class="insight-row current" data-insight="revenue">
             <div class="insight-left">
               <div class="arrow-up"></div>
               <span class="insight-text"><strong>Attributed revenue is up 8%</strong> from last 30 days</span>
             </div>
             <span class="insight-link">What are the top reasons subscribers bouncing?</span>
           </div>
-          <div class="insight-detail" id="detail-revenue">
+          <div class="insight-detail current" data-insight-detail="revenue">
             <div class="detail-section">
               <h4>Finding</h4>
               <p>Your store revenue attributed to email campaigns grew <strong>+8%</strong> versus the prior 30 days, driven primarily by your "June end of season sale" campaign which generated $9,907.80 from 1,800 recipients.</p>
@@ -738,19 +876,20 @@
             <div class="detail-actions">
               <button class="detail-btn">Create similar campaign</button>
               <button class="detail-btn secondary">Continue with Analytics AI</button>
+              <button class="got-it-btn" data-got-it="revenue">Got it</button>
               <span class="feedback">Was this helpful? 👍 👎</span>
             </div>
           </div>
 
           <!-- Insight 2: New subscribers -->
-          <div class="insight-row" data-target="detail-subs" tabindex="0">
+          <div class="insight-row" data-insight="subs">
             <div class="insight-left">
               <div class="arrow-up"></div>
               <span class="insight-text"><strong>You've gained 168 new subscribers!</strong></span>
             </div>
             <span class="insight-link">Compare to my industry peers</span>
           </div>
-          <div class="insight-detail" id="detail-subs">
+          <div class="insight-detail" data-insight-detail="subs">
             <div class="detail-section">
               <h4>Finding</h4>
               <p>You added <strong>168 net new subscribers</strong> in the last 30 days — a 3% increase in net subscriber growth. Email subscribers grew 12% and SMS subscribers grew 6%.</p>
@@ -762,19 +901,20 @@
             <div class="detail-actions">
               <button class="detail-btn">Set up welcome series</button>
               <button class="detail-btn secondary">View industry benchmarks</button>
+              <button class="got-it-btn" data-got-it="subs">Got it</button>
               <span class="feedback">Was this helpful? 👍 👎</span>
             </div>
           </div>
 
           <!-- Insight 3: Click rate down -->
-          <div class="insight-row" data-target="detail-click" tabindex="0">
+          <div class="insight-row" data-insight="click">
             <div class="insight-left">
               <div class="arrow-down"></div>
               <span class="insight-text"><strong>Click rate is trending down</strong> compared to your 30 day average</span>
             </div>
             <span class="insight-link">What's most affecting my click rate?</span>
           </div>
-          <div class="insight-detail" id="detail-click">
+          <div class="insight-detail" data-insight-detail="click">
             <div class="detail-section">
               <h4>Finding</h4>
               <p>Your click rate dropped from a 30-day average of <strong>13.5%</strong> to <strong>12.3%</strong> in your last 6 sends. The biggest contributor was lower CTA visibility on mobile devices (62% of opens).</p>
@@ -786,8 +926,17 @@
             <div class="detail-actions">
               <button class="detail-btn">Run A/B test</button>
               <button class="detail-btn secondary">See click heatmap</button>
+              <button class="got-it-btn" data-got-it="click">Got it</button>
               <span class="feedback">Was this helpful? 👍 👎</span>
             </div>
+          </div>
+
+          <!-- Empty state when all insights dismissed -->
+          <div class="diag-caught-up" id="diag-caught-up">
+            <span class="caught-up-check">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            You've reviewed all insights — check back tomorrow
           </div>
         </div>
       </div>
@@ -958,29 +1107,94 @@
 </div>
 
 <script>
-  // Expand / collapse insights inside the diagnostics panel
+  // Insight queue: "Got it" dismisses current insight, stacks it as a shadow tab, shows next
+  const insightOrder = ['revenue', 'subs', 'click'];
+  const insightTitles = {
+    revenue: 'Attributed revenue is up 8% from last 30 days',
+    subs: "You've gained 168 new subscribers!",
+    click: 'Click rate is trending down compared to your 30 day average'
+  };
+  let queueIndex = 0;
+
+  function showInsight(key) {
+    document.querySelector(`.insight-row[data-insight="${key}"]`).classList.add('current');
+    document.querySelector(`.insight-detail[data-insight-detail="${key}"]`).classList.add('current');
+    document.getElementById('diag-caught-up').classList.remove('show');
+  }
+
+  function hideCurrent() {
+    document.querySelectorAll('.insight-row.current, .insight-detail.current')
+      .forEach(el => {
+        el.classList.remove('current');
+        el.classList.remove('expanded');
+      });
+  }
+
+  // Click the insight row to expand/collapse its detail
   document.querySelectorAll('.insight-row').forEach(row => {
     row.addEventListener('click', () => {
-      const targetId = row.dataset.target;
-      const detail = document.getElementById(targetId);
-      const isOpen = detail.classList.contains('open');
-
-      // close any other open detail (accordion behavior)
-      document.querySelectorAll('.insight-detail.open').forEach(d => d.classList.remove('open'));
-      document.querySelectorAll('.insight-row.expanded').forEach(r => r.classList.remove('expanded'));
-
-      if (!isOpen) {
-        detail.classList.add('open');
-        row.classList.add('expanded');
-        // place the detail panel right after the clicked row
-        row.parentNode.insertBefore(detail, row.nextSibling);
-      }
+      if (!row.classList.contains('current')) return;
+      const key = row.dataset.insight;
+      const detail = document.querySelector(`.insight-detail[data-insight-detail="${key}"]`);
+      const isExpanded = row.classList.contains('expanded');
+      row.classList.toggle('expanded', !isExpanded);
+      detail.classList.toggle('expanded', !isExpanded);
     });
+  });
 
-    row.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        row.click();
+  function advanceQueue() {
+    queueIndex++;
+    if (queueIndex < insightOrder.length) {
+      showInsight(insightOrder[queueIndex]);
+    } else {
+      document.getElementById('diag-caught-up').classList.add('show');
+    }
+  }
+
+  function addShadowTab(key) {
+    const stack = document.getElementById('prev-insights');
+    // avoid duplicates if user re-dismisses after viewing again
+    if (stack.querySelector(`[data-prev="${key}"]`)) return;
+
+    const tab = document.createElement('div');
+    tab.className = 'prev-insight-tab';
+    tab.dataset.prev = key;
+    tab.innerHTML = `
+      <div class="prev-tab-left">
+        <svg class="prev-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <span class="prev-tab-title">${insightTitles[key]}</span>
+      </div>
+      <button class="view-again-btn">View again →</button>
+    `;
+    tab.querySelector('.view-again-btn').addEventListener('click', () => {
+      // hide whatever's currently showing, restore this insight, remove its shadow tab
+      hideCurrent();
+      showInsight(key);
+      tab.remove();
+    });
+    stack.appendChild(tab);
+  }
+
+  document.querySelectorAll('.got-it-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // figure out which insight is currently visible (not always queue[queueIndex] if user viewed-again)
+      const currentRow = document.querySelector('.insight-row.current');
+      if (!currentRow) return;
+      const currentKey = currentRow.dataset.insight;
+
+      hideCurrent();
+      addShadowTab(currentKey);
+
+      // if the dismissed one was the queue's current pointer, advance; otherwise restore the queue pointer's insight
+      if (currentKey === insightOrder[queueIndex]) {
+        advanceQueue();
+      } else {
+        // user had restored a past insight and dismissed it again — go back to wherever the queue is
+        if (queueIndex < insightOrder.length) {
+          showInsight(insightOrder[queueIndex]);
+        } else {
+          document.getElementById('diag-caught-up').classList.add('show');
+        }
       }
     });
   });
@@ -1007,12 +1221,37 @@
     });
   });
 
-  // Dismiss all (Today's focus)
+  // Dismiss all (Your daily focus) — only removes top action items, NOT diagnostics
   document.querySelector('.dismiss-link').addEventListener('click', () => {
-    if (confirm('Dismiss all of today\'s focus items?')) {
-      document.querySelector('.focus-card').style.display = 'none';
+    const remaining = document.querySelectorAll('.action-items .auth-row');
+    if (remaining.length === 0) return;
+    if (confirm('Dismiss all action items?')) {
+      remaining.forEach(row => row.remove());
+      checkCaughtUp();
     }
   });
+
+  // "Do it later" — dismiss a single action
+  document.querySelectorAll('.later-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.dismiss;
+      const row = document.querySelector(`.auth-row[data-action-id="${id}"]`);
+      if (row) row.remove();
+      checkCaughtUp();
+    });
+  });
+
+  // Show empty state when no top actions remain
+  function checkCaughtUp() {
+    const remaining = document.querySelectorAll('.action-items .auth-row').length;
+    const emptyState = document.getElementById('caught-up-state');
+    if (remaining === 0) {
+      emptyState.classList.add('show');
+    } else {
+      emptyState.classList.remove('show');
+    }
+  }
 </script>
 
 </body>
