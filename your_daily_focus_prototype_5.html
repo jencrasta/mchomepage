@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Your Daily Focus — Phase 2 Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mc-yellow: #FFE01B;
+    --bg: #F6F6F4;
+    --card-bg: #FFFFFF;
+    --border: #E6E6E6;
+    --border-strong: #D5D5D5;
+    --text: #241C15;
+    --text-soft: #6B6B6B;
+    --text-muted: #8A8A8A;
+    --teal: #007C89;
+    --teal-dark: #006670;
+    --teal-bg: #E5F2F3;
+    --link: #007C89;
+    --green: #2E8540;
+    --green-bg: #E8F5EC;
+    --diag-bg: #EAF4FF;
+    --diag-bg-soft: #F2F8FF;
+    --diag-border: #C9E1F8;
+    --focus-blue: #1B5DAB;
+    --shadow-card: 0 1px 2px rgba(0,0,0,0.04), 0 1px 1px rgba(0,0,0,0.02);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    font-family: "Helvetica Neue", "Inter", -apple-system, sans-serif;
+    color: var(--text);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-shell { padding: 18px 28px 0; }
+  .page-title {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .phase-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(27, 93, 171, 0.08);
+    color: var(--focus-blue);
+    border: 1px solid rgba(27, 93, 171, 0.2);
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .app {
+    background: var(--card-bg);
+    border-top: 4px solid var(--mc-yellow);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+  }
+
+  .topbar {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+  }
+  .logo {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--mc-yellow);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .search {
+    justify-self: center;
+    width: 460px; max-width: 100%;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px 8px 32px;
+    font-size: 13px;
+    color: var(--text-muted);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238A8A8A' stroke-width='2'><circle cx='11' cy='11' r='8'/><path d='m21 21-4.3-4.3'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+  }
+  .top-right { display: flex; align-items: center; gap: 14px; }
+  .top-icon {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    background: transparent; border: 0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--text-soft);
+  }
+  .top-icon:hover { background: var(--bg); }
+  .avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #B47BCC, #8C4FA8);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 11px;
+  }
+
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 16px 12px;
+    display: flex; flex-direction: column;
+    gap: 4px;
+    background: #fff;
+  }
+  .nav-item {
+    display: flex; align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-soft);
+    cursor: pointer;
+  }
+  .nav-item.active {
+    background: var(--bg);
+    color: var(--text);
+    font-weight: 600;
+  }
+  .nav-item:hover:not(.active) { background: var(--bg); }
+  .nav-icon { width: 16px; height: 16px; }
+
+  .main {
+    padding: 20px 28px 60px;
+    background: var(--bg);
+  }
+  .main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .main-title-row { display: flex; align-items: center; gap: 12px; }
+  .main-title { font-size: 22px; font-weight: 700; }
+  .audience-pill {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--text-soft);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .header-actions { display: flex; gap: 8px; }
+  .header-actions button {
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    background: #fff;
+    color: var(--text);
+  }
+  .create-email-btn {
+    background: var(--text) !important;
+    color: #fff !important;
+    border-color: var(--text) !important;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 16px;
+  }
+
+  /* ============================================================
+     YOUR DAILY FOCUS — Phase 2 (compact row + dropdown pattern)
+     ============================================================ */
+  .focus-card { padding: 24px 28px; }
+
+  .focus-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .focus-title-block { display: flex; flex-direction: column; gap: 4px; }
+  .focus-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .focus-sub { font-size: 13px; color: var(--text-soft); }
+
+  .why-link {
+    font-size: 12px;
+    color: var(--link);
+    cursor: pointer;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .why-link:hover { text-decoration: underline; }
+  .why-link svg.chevron { transition: transform 0.2s ease; }
+  .why-link.open svg.chevron { transform: rotate(180deg); }
+
+  /* Why panel */
+  .why-panel {
+    padding: 0 16px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--text-soft);
+    line-height: 1.5;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin-bottom: 0;
+    transition: max-height 0.25s ease, padding 0.25s ease, opacity 0.2s ease, margin 0.25s ease;
+  }
+  .why-panel.open {
+    max-height: 200px;
+    padding: 14px 16px;
+    opacity: 1;
+    margin-bottom: 16px;
+  }
+  .why-panel strong { color: var(--text); }
+  .why-panel p { margin-bottom: 8px; }
+  .why-panel p:last-child { margin-bottom: 0; }
+
+  /* ============ THE ACTION ROW (marketing-diagnostics pattern) ============ */
+  .action-row-wrap {
+    background: var(--diag-bg-soft);
+    border: 1px solid var(--diag-border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: background 0.2s ease;
+  }
+  .action-row-wrap.expanded {
+    background: var(--diag-bg-soft);
+  }
+
+  .action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .action-row:hover {
+    background: rgba(255,255,255,0.4);
+  }
+
+  /* Left side: icon + headline + benefit */
+  .action-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+  .action-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--mc-yellow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text);
+  }
+  .action-headline {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+  .action-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.005em;
+  }
+  .action-benefit {
+    font-size: 13px;
+    color: var(--text-soft);
+    font-weight: 400;
+  }
+
+  /* Right side: dropdown link */
+  .action-dropdown-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--link);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    flex-shrink: 0;
+    user-select: none;
+  }
+  .action-dropdown-link:hover { color: var(--teal-dark); }
+  .action-dropdown-link svg {
+    transition: transform 0.25s ease;
+  }
+  .action-row-wrap.expanded .action-dropdown-link svg {
+    transform: rotate(180deg);
+  }
+
+  /* ============ EXPANDED WORKFLOW DETAILS ============ */
+  .action-details {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    background: #fff;
+    border-top: 1px solid var(--diag-border);
+  }
+  .action-row-wrap.expanded .action-details {
+    max-height: 800px;
+    opacity: 1;
+  }
+
+  .details-inner {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* Left details: extended description + benefits + secondary CTA */
+  .details-left {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .details-description {
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.55;
+  }
+  .details-benefits {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .details-benefits li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.45;
+  }
+  .details-benefits .benefit-check {
+    width: 14px;
+    height: 14px;
+    color: var(--green);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .details-secondary-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .details-link {
+    font-size: 13px;
+    color: var(--link);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .details-link:hover { text-decoration: underline; }
+  .skip-btn {
+    background: transparent;
+    border: 0;
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+  .skip-btn:hover { background: var(--bg); color: var(--text-soft); }
+
+  /* Right details: embedded workflow (form/steps) */
+  .embedded-workflow {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .workflow-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .workflow-sub {
+    font-size: 12px;
+    color: var(--text-soft);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .workflow-form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .workflow-form-input {
+    width: 100%;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    background: #fff;
+    margin-bottom: 6px;
+  }
+  .workflow-form-input:focus {
+    outline: 2px solid var(--teal);
+    outline-offset: -2px;
+    border-color: var(--teal);
+  }
+  .workflow-form-helper {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    line-height: 1.45;
+  }
+  .workflow-buttons {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .workflow-cta {
+    background: var(--teal);
+    color: #fff;
+    border: 0;
+    border-radius: 6px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .workflow-cta:hover { background: var(--teal-dark); }
+  .workflow-skip {
+    font-size: 13px;
+    color: var(--link);
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .workflow-skip:hover { text-decoration: underline; }
+
+  /* Steps (for non-form actions) */
+  .workflow-steps {
+    counter-reset: step;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .workflow-steps li {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.45;
+    counter-increment: step;
+  }
+  .workflow-steps li::before {
+    content: counter(step);
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    background: var(--teal-bg);
+    color: var(--teal);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .workflow-steps li strong {
+    color: var(--text);
+    display: block;
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+
+  /* ---------- Performance widget ---------- */
+  .perf-card { padding: 16px 18px; }
+  .perf-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  .perf-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .perf-stat {
+    border-left: 2px solid var(--border);
+    padding-left: 12px;
+  }
+  .perf-stat:first-child { border-left: 0; padding-left: 0; }
+  .perf-stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .perf-stat-value { font-size: 22px; font-weight: 700; }
+  .perf-stat-delta { font-size: 11px; color: var(--green); font-weight: 600; }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 100;
+    max-width: 360px;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Responsive: stack on smaller screens */
+  @media (max-width: 900px) {
+    .details-inner {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ============ SKIPPED / GHOST ROW STATE ============ */
+  .skipped-row {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 20px;
+    background: rgba(246, 246, 244, 0.6);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    animation: ghostFadeIn 0.3s ease;
+  }
+  .skipped-row.show { display: flex; }
+  @keyframes ghostFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .skipped-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 13px;
+    min-width: 0;
+  }
+  .skipped-check {
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .skipped-text { color: var(--text-muted); }
+  .skipped-text strong {
+    font-weight: 600;
+    color: var(--text-soft);
+    text-decoration: line-through;
+    text-decoration-color: var(--border-strong);
+    text-decoration-thickness: 1px;
+  }
+  .view-again-link {
+    color: var(--link);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .view-again-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="page-shell">
+  <div class="page-title">
+    Mailchimp Home — <strong style="color: var(--text)">Phase 2 Prototype: Your Daily Focus</strong>
+    <span class="phase-tag">Contextual bandit · single action at a time</span>
+  </div>
+</div>
+
+<div class="app">
+  <div class="topbar">
+    <div class="logo">😊</div>
+    <input class="search" placeholder="Search Mailchimp" />
+    <div class="top-right">
+      <button class="top-icon" title="Help">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg>
+      </button>
+      <button class="top-icon" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      </button>
+      <div class="avatar">JF</div>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      Home
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Campaigns
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Audience
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+      Analytics
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9 6 9-6"/><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7"/></svg>
+      Content
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20"/></svg>
+      Integrations
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="main-header">
+      <div class="main-title-row">
+        <h1 class="main-title">Home</h1>
+        <button class="audience-pill">Audience: BorderBouncerz</button>
+      </div>
+      <div class="header-actions">
+        <button>📅 Last 30 days ▾</button>
+        <button>Quick actions</button>
+        <button class="create-email-btn">Create email</button>
+      </div>
+    </div>
+
+    <!-- ============ YOUR DAILY FOCUS ============ -->
+    <div class="card focus-card">
+      <div class="focus-top">
+        <div class="focus-title-block">
+          <div class="focus-title">Your daily focus</div>
+          <div class="focus-sub">One step at a time — personalized to your account</div>
+        </div>
+        <span class="why-link" id="why-link" onclick="toggleWhy()">
+          Why this?
+          <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+      </div>
+
+      <div class="why-panel" id="why-panel">
+        <p><strong>This action is matched to where you are in your Mailchimp journey.</strong></p>
+        <p id="why-reason"></p>
+        <p style="color: var(--text-muted); font-size: 11px; margin-top: 8px;">Recommendations refresh daily based on your activity. Skip what isn't relevant — we'll show it less.</p>
+      </div>
+
+      <!-- Skipped (ghost) row — appears after skip, allows undo -->
+      <div class="skipped-row" id="skipped-row">
+        <div class="skipped-left">
+          <svg class="skipped-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span class="skipped-text">Skipped: <strong id="skipped-title"></strong></span>
+        </div>
+        <span class="view-again-link" onclick="undoSkip()">View again →</span>
+      </div>
+
+      <!-- Compact action row (collapsed by default) -->
+      <div class="action-row-wrap" id="action-row-wrap">
+        <div class="action-row" id="action-row" onclick="toggleDetails()">
+          <div class="action-left">
+            <div class="action-icon" id="action-icon">
+              <!-- icon swapped per action -->
+            </div>
+            <div class="action-headline">
+              <span class="action-title" id="action-title">Connect your Shopify store</span>
+              <span class="action-benefit" id="action-benefit">Recover 10-15% of lost revenue from abandoned carts</span>
+            </div>
+          </div>
+          <span class="action-dropdown-link" id="action-dropdown-link">
+            <span id="dropdown-label">See how this works</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </div>
+
+        <!-- Expanded details (workflow) -->
+        <div class="action-details">
+          <div class="details-inner">
+            <div class="details-left">
+              <div class="details-description" id="details-description"></div>
+              <ul class="details-benefits" id="details-benefits"></ul>
+              <div class="details-secondary-row">
+                <a class="details-link" onclick="showToast('Case studies would open')">See case studies</a>
+                <button class="skip-btn" onclick="skipAction(event)">Skip for now</button>
+              </div>
+            </div>
+            <div class="embedded-workflow" id="embedded-workflow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance widget -->
+    <div class="card perf-card">
+      <div class="perf-title">Marketing performance</div>
+      <div class="perf-grid">
+        <div class="perf-stat">
+          <div class="perf-stat-label">Opens</div>
+          <div class="perf-stat-value">42.3%</div>
+          <div class="perf-stat-delta">+2.1% vs last 30d</div>
+        </div>
+        <div class="perf-stat">
+          <div class="perf-stat-label">Clicks</div>
+          <div class="perf-stat-value">5.8%</div>
+          <div class="perf-stat-delta">+0.4% vs last 30d</div>
+        </div>
+        <div class="perf-stat">
+          <div class="perf-stat-label">Subscribers</div>
+          <div class="perf-stat-value">12,847</div>
+          <div class="perf-stat-delta">+168 net new</div>
+        </div>
+        <div class="perf-stat">
+          <div class="perf-stat-label">Revenue</div>
+          <div class="perf-stat-value">$24.1k</div>
+          <div class="perf-stat-delta">+8% vs last 30d</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const actions = [
+    {
+      id: 'shopify',
+      title: 'Connect your Shopify store',
+      headlineBenefit: 'Recover 10-15% of lost revenue from abandoned carts',
+      detailsDescription: "Sync your products, customers, and orders so your emails can do more than just say hello — they can recommend products, recover lost sales, and track exactly what each campaign earns.",
+      benefits: [
+        'Recover abandoned carts automatically — typically 10-15% of lost revenue',
+        'Recommend products based on what each customer has browsed or bought',
+        'Track exactly how much revenue each campaign generates',
+      ],
+      whyReason: "You've imported your brand, added contacts, and verified your email — solid foundation. Connecting your store is the next step that unlocks the most revenue impact for accounts like yours.",
+      dropdownLabel: 'Connect Shopify',
+      icon: 'shopify',
+      workflow: {
+        type: 'form',
+        title: 'Sync your Shopify store',
+        sub: "Enter your store URL and we'll connect to Shopify in a few clicks. No code or developer needed.",
+        label: 'Shopify store URL',
+        placeholder: 'yourstore.myshopify.com',
+        helper: 'By clicking "Connect," you authorize Mailchimp to read your products, customers, and orders from Shopify.',
+        ctaLabel: 'Connect',
+        skipLabel: "I don't use Shopify",
+      },
+    },
+    {
+      id: 'domain',
+      title: 'Authenticate your domain',
+      headlineBenefit: 'Up to 20% better email delivery — required by Gmail and Yahoo',
+      detailsDescription: 'Verifying your sending domain tells inbox providers that your emails are legitimately from you. This protects your delivery rates as you grow.',
+      benefits: [
+        'Up to 20% better delivery rate — more emails reach the inbox, not spam',
+        'Your sender name shows up cleanly instead of "via mailchimp.com"',
+        'Required by Gmail and Yahoo for senders with 5,000+ contacts',
+      ],
+      whyReason: "Your audience is approaching the threshold where major inbox providers start enforcing authentication. Doing this now protects your delivery rates before it becomes a problem.",
+      dropdownLabel: 'Authenticate now',
+      icon: 'domain',
+      workflow: {
+        type: 'form',
+        title: 'Authenticate your sending domain',
+        sub: "Enter the domain you send from and we'll generate the DNS records you need to add.",
+        label: 'Sending domain',
+        placeholder: 'yourbrand.com',
+        helper: "You'll need access to your domain's DNS settings (usually through GoDaddy, Cloudflare, etc.) to complete this in a few minutes.",
+        ctaLabel: 'Generate records',
+        skipLabel: 'I need help with this',
+      },
+    },
+    {
+      id: 'welcome',
+      title: 'Set up a welcome automation',
+      headlineBenefit: '2.5x higher 90-day retention with a welcome series',
+      detailsDescription: 'A welcome automation greets every new subscriber automatically. One-time setup — runs on its own from there.',
+      benefits: [
+        '2.5x higher 90-day retention for subscribers who get a welcome email',
+        'Runs on its own — set it once and every new subscriber gets it',
+        'Builds on your imported brand so it looks polished from day one',
+      ],
+      whyReason: "You're adding subscribers but they're not getting a structured first impression. A welcome series is the highest-leverage automation for newer accounts because every new contact goes through it.",
+      dropdownLabel: 'Build welcome flow',
+      icon: 'automation',
+      workflow: {
+        type: 'steps',
+        title: "Here's how it works",
+        sub: "A welcome automation is a one-time setup. Once it's on, every new subscriber goes through it.",
+        steps: [
+          { title: 'Pick a template', body: 'Start from a pre-built welcome series or build from scratch.' },
+          { title: 'Customize the message', body: 'Use your imported brand to keep it on-brand automatically.' },
+          { title: 'Turn it on', body: 'New subscribers start receiving it within minutes of joining.' },
+        ],
+        ctaLabel: 'Start with a template',
+        skipLabel: 'Maybe later',
+      },
+    },
+    {
+      id: 'sms',
+      title: 'Apply for SMS marketing',
+      headlineBenefit: '98% average open rate — vs ~25% for email',
+      detailsDescription: 'Reach customers on the channel they actually check within minutes. SMS is the highest-engagement channel Mailchimp offers.',
+      benefits: [
+        '98% average open rate — vs ~25% for email',
+        "We handle compliance setup so you don't have to figure it out",
+        'Pairs with your existing campaigns for cross-channel reach',
+      ],
+      whyReason: 'Your engagement metrics suggest your audience is responsive — SMS is a strong fit for accounts with this profile. Approval can take a few days, so applying now gets you ready when you want to use it.',
+      dropdownLabel: 'Start application',
+      icon: 'sms',
+      workflow: {
+        type: 'steps',
+        title: 'How SMS approval works',
+        sub: "Approval typically takes 2-3 business days. We'll handle the carrier compliance — you just answer a few questions about your business.",
+        steps: [
+          { title: 'Tell us about your business', body: 'Quick form: business type, what you sell, sample message.' },
+          { title: 'We submit to carriers', body: 'We package your application for carrier review behind the scenes.' },
+          { title: 'Start sending', body: 'Once approved, SMS becomes a channel option in every campaign.' },
+        ],
+        ctaLabel: 'Start application',
+        skipLabel: 'Not interested',
+      },
+    },
+    {
+      id: 'segment',
+      title: 'Create your first audience segment',
+      headlineBenefit: '14% higher open rates on segmented campaigns',
+      detailsDescription: "You have 12,847 contacts but you're emailing all of them the same way. Segments let you target high-value subscribers, lapsed customers, or geographic regions with tailored content.",
+      benefits: [
+        '14% higher open rates on segmented campaigns',
+        'Target VIPs, lapsed customers, or location-based groups separately',
+        'Reuse segments across every future campaign — set up once',
+      ],
+      whyReason: "Your list has grown enough that segmentation will start paying off. Accounts at your size typically see double-digit lift in opens and clicks once they segment.",
+      dropdownLabel: 'Create segment',
+      icon: 'segment',
+      workflow: {
+        type: 'steps',
+        title: 'Build your first segment in 3 steps',
+        sub: 'Most accounts at your size start with one of these high-value segments.',
+        steps: [
+          { title: 'Pick a starting point', body: "Top spenders, recently active, or location-based — we'll suggest the best fit." },
+          { title: 'Set the rules', body: 'Drag and drop conditions like "spent more than $50" or "opened in last 30 days."' },
+          { title: 'Save and reuse', body: 'Use it in every future campaign — no need to rebuild.' },
+        ],
+        ctaLabel: 'Pick a starting point',
+        skipLabel: 'Later',
+      },
+    },
+  ];
+
+  // Compact icons for the row (small, single-color, fit the 28px square)
+  const icons = {
+    shopify: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
+    domain: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>`,
+    automation: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.07.36.36.65.72.78H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+    sms: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+    segment: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>`,
+  };
+
+  let currentIndex = 0;
+
+  function renderAction() {
+    const a = actions[currentIndex];
+
+    document.getElementById('action-icon').innerHTML = icons[a.icon];
+    document.getElementById('action-title').textContent = a.title;
+    document.getElementById('action-benefit').textContent = a.headlineBenefit;
+    document.getElementById('dropdown-label').textContent = a.dropdownLabel;
+    document.getElementById('details-description').textContent = a.detailsDescription;
+    document.getElementById('why-reason').textContent = a.whyReason;
+
+    const benefitsEl = document.getElementById('details-benefits');
+    benefitsEl.innerHTML = a.benefits.map(b => `
+      <li>
+        <svg class="benefit-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>${b}</span>
+      </li>
+    `).join('');
+
+    // Embedded workflow
+    const wEl = document.getElementById('embedded-workflow');
+    const w = a.workflow;
+    if (w.type === 'form') {
+      wEl.innerHTML = `
+        <div class="workflow-title">${w.title}</div>
+        <div class="workflow-sub">${w.sub}</div>
+        <label class="workflow-form-label">${w.label}</label>
+        <input class="workflow-form-input" type="text" placeholder="${w.placeholder}" />
+        <div class="workflow-form-helper">${w.helper}</div>
+        <div class="workflow-buttons">
+          <button class="workflow-cta" onclick="completeAction(event)">${w.ctaLabel}</button>
+          <span class="workflow-skip" onclick="skipAction(event)">${w.skipLabel}</span>
+        </div>
+      `;
+    } else {
+      wEl.innerHTML = `
+        <div class="workflow-title">${w.title}</div>
+        <div class="workflow-sub">${w.sub}</div>
+        <ol class="workflow-steps">
+          ${w.steps.map(s => `
+            <li>
+              <div>
+                <strong>${s.title}</strong>
+                ${s.body}
+              </div>
+            </li>
+          `).join('')}
+        </ol>
+        <div class="workflow-buttons">
+          <button class="workflow-cta" onclick="completeAction(event)">${w.ctaLabel}</button>
+          <span class="workflow-skip" onclick="skipAction(event)">${w.skipLabel}</span>
+        </div>
+      `;
+    }
+  }
+
+  function toggleDetails() {
+    document.getElementById('action-row-wrap').classList.toggle('expanded');
+  }
+
+  function toggleWhy() {
+    document.getElementById('why-panel').classList.toggle('open');
+    document.getElementById('why-link').classList.toggle('open');
+  }
+
+  function resetState() {
+    document.getElementById('action-row-wrap').classList.remove('expanded');
+    document.getElementById('why-panel').classList.remove('open');
+    document.getElementById('why-link').classList.remove('open');
+  }
+
+  function completeAction(e) {
+    if (e) e.stopPropagation();
+    const a = actions[currentIndex];
+    showToast(`${a.title} — flow would open`);
+    clearTimeout(window._skipTimer);
+    document.getElementById('skipped-row').classList.remove('show');
+    resetState();
+    setTimeout(() => {
+      currentIndex = (currentIndex + 1) % actions.length;
+      renderAction();
+    }, 800);
+  }
+
+  function skipAction(e) {
+    if (e) e.stopPropagation();
+    const skippedAction = actions[currentIndex];
+
+    // Reset any open states on the current action
+    resetState();
+
+    // Show ghost row for the skipped action
+    document.getElementById('skipped-title').textContent = skippedAction.title;
+    document.getElementById('skipped-row').classList.add('show');
+
+    showToast("Skipped — we'll show this less often");
+
+    // Immediately advance to the next action
+    currentIndex = (currentIndex + 1) % actions.length;
+    renderAction();
+
+    // Auto-hide the ghost after a delay (gives user time to undo)
+    clearTimeout(window._skipTimer);
+    window._skipTimer = setTimeout(() => {
+      document.getElementById('skipped-row').classList.remove('show');
+    }, 8000);
+  }
+
+  function undoSkip() {
+    clearTimeout(window._skipTimer);
+    document.getElementById('skipped-row').classList.remove('show');
+
+    // Bring the skipped action back: rewind index by 1
+    currentIndex = (currentIndex - 1 + actions.length) % actions.length;
+    renderAction();
+    showToast("Brought back — take another look");
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  renderAction();
+</script>
+</body>
+</html>
